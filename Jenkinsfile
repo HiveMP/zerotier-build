@@ -4,6 +4,7 @@ stage('Windows') {
     bat('git submodule update --init --recursive')
     dir('libzt') {
       bat('git clean -xdf build bin_win')
+      bat('set')
       bat('call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"')
       bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
       bat('cmake --build build')
