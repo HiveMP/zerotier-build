@@ -3,13 +3,11 @@ stage('Windows') {
     checkout scm
     bat('git submodule update --init --recursive')
     dir('libzt') {
-      bat('''
-git clean -xdf build bin_win
-call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\VsDevCmd.bat"
-cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
-cmake --build build
-move bin bin_win
-''')
+      bat('git clean -xdf build bin_win')
+      bat('call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\Common7\\Tools\\VsDevCmd.bat"')
+      bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
+      bat('cmake --build build')
+      bat('move bin bin_win')
     }
     archiveArtifacts 'libzt/bin_win/**'
   }
