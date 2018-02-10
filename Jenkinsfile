@@ -5,6 +5,7 @@ node('linux') {
     sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
     sh('cmake --build build')
   }
+  archiveArtifacts 'libzt/bin/**,libzt/include/**'
 }
 node('mac') {
   checkout scm
@@ -13,6 +14,7 @@ node('mac') {
     sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
     sh('cmake --build build')
   }
+  archiveArtifacts 'libzt/bin/**,libzt/include/**'
 }
 node('windows') {
   checkout scm
@@ -21,4 +23,5 @@ node('windows') {
     bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
     bat('cmake --build build')
   }
+  archiveArtifacts 'libzt/bin/**,libzt/include/**'
 }
