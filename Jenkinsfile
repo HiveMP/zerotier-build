@@ -27,7 +27,7 @@ stage('Windows') {
     checkout scm
     bat('git submodule update --init --recursive')
     dir('libzt') {
-      bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
+      bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "MSYS Makefiles"')
       bat('cmake --build build')
       bat('move bin bin_win')
     }
