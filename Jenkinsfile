@@ -30,9 +30,11 @@ stage('Windows') {
     bat('git submodule update --init --recursive')
     dir('libzt') {
       bat('git clean -xdf build bin_win')
-      bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "MSYS Makefiles"')
-      bat('cmake --build build')
-      bat('move bin bin_win')
+      withEnv(['PATH+MINGW=C:\\Program Files\\mingw-w64\\x86_64-7.2.0-win32-seh-rt_v5-rev1\\mingw64\\bin']) {
+        bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "MinGW Makefiles"')
+        bat('cmake --build build')
+        bat('move bin bin_win')
+      }
     }
     archiveArtifacts 'libzt/bin_win/**'
   }
