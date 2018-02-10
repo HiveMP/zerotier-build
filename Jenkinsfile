@@ -5,8 +5,9 @@ stage('Linux') {
     dir('libzt') {
       sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
       sh('cmake --build build')
+      sh('mv bin bin_linux')
     }
-    archiveArtifacts 'libzt/bin/**,libzt/include/**'
+    archiveArtifacts 'libzt/bin_linux/**,libzt/include/**'
   }
 }
 stage('macOS') {
@@ -16,8 +17,9 @@ stage('macOS') {
     dir('libzt') {
       sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
       sh('cmake --build build')
+      sh('mv bin bin_mac')
     }
-    archiveArtifacts 'libzt/bin/**,libzt/include/**'
+    archiveArtifacts 'libzt/bin_mac/**'
   }
 }
 stage('Windows') {
@@ -27,7 +29,8 @@ stage('Windows') {
     dir('libzt') {
       bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
       bat('cmake --build build')
+      bat('move bin bin_win')
     }
-    archiveArtifacts 'libzt/bin/**,libzt/include/**'
+    archiveArtifacts 'libzt/bin_win/**'
   }
 }
