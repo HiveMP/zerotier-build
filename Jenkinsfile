@@ -7,7 +7,7 @@ stage('Windows') {
       bat('''
 set PATH=%PATH:"=%
 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
-cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_SYSTEM_VERSION=10.0.15063.0
+cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
 ''')
       bat('''
 set PATH=%PATH:"=%
