@@ -6,10 +6,13 @@ stage('Windows') {
       bat('git clean -xdf build bin_win')
       bat('''
 set PATH=%PATH:"=%
-set''')
-      bat('call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"')
-      bat('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE')
-      bat('cmake --build build')
+call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
+''')
+      bat('''
+set PATH=%PATH:"=%
+call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+cmake --build build''')
       bat('move bin bin_win')
     }
     archiveArtifacts 'libzt/bin_win/**'
