@@ -1,9 +1,10 @@
+def gitCommit = ""
 stage('Linux') {
   node('linux') {
     withCredentials([string(credentialsId: 'HiveMP-Deploy', variable: 'GITHUB_TOKEN')]) {
       // Try to load credential so we know they'll work at the end of the script.
     }
-    checkout scm
+    gitCommit = checkout(poll: true, changelog: true, scm: scm).GIT_COMMIT
     sh('git submodule update --init --recursive')
     dir('libzt') {
       sh('git clean -xdf build bin_linux64 || true')
@@ -17,7 +18,7 @@ stage('Linux') {
 }
 stage('Windows') {
   node('windows') {
-    checkout scm
+    checkout(poll: false, changelog: false, scm: scm)
     bat('git submodule update --init --recursive')
     dir('libzt') {
       bat('''
@@ -38,7 +39,7 @@ cmake --build build''')
 }
 stage('macOS') {
   node('mac') {
-    checkout scm
+    checkout(poll: false, changelog: false, scm: scm)
     sh('git submodule update --init --recursive')
     dir('libzt') {
       sh('git clean -xdf build bin_macosuniversal || true')
