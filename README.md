@@ -7,7 +7,11 @@ _This repository automatically builds libzt (ZeroTier) for various platforms._
 
 ## Usage
 
-You can download the latest builds of libzt from the GitHub releases page.
+You can download the latest builds of libzt from the [GitHub releases page](https://github.com/HiveMP/zerotier-build/releases). We currently provide binaries and static libraries for:
+
+* Linux (64-bit)
+* macOS (Universal)
+* Windows (64-bit)
 
 ## Licensing
 
