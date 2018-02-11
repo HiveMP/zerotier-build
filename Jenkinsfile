@@ -47,6 +47,7 @@ stage('macOS') {
     stash includes: 'libzt/bin_macosuniversal/**', name: 'mac'
   }
 }
+milestone label: 'Publish', ordinal: 20
 stage('Publish to GitHub') {
   node('linux') {
     withCredentials([string(credentialsId: 'HiveMP-Deploy', variable: 'GITHUB_TOKEN')]) {
