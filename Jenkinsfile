@@ -32,7 +32,7 @@ stage('Build') {
       stash includes: 'libzt/bin_macosuniversal/**,libzt/include/**', name: 'mac'
     }
   }
-  parallelMap["Windows"] = {
+  parallelMap["Windows x64"] = {
     node('windows') {
       checkout(poll: false, changelog: false, scm: scm)
       bat('git submodule update --init --recursive')
@@ -41,7 +41,7 @@ stage('Build') {
   git clean -xdf build bin_win64
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
-  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
+  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017 Win64"
   ''')
         bat('''
   set PATH=%PATH:"=%
@@ -50,7 +50,28 @@ stage('Build') {
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**'
-      stash includes: 'libzt/bin_win64/**,libzt/include/**', name: 'win'
+      stash includes: 'libzt/bin_win64/**,libzt/include/**', name: 'win64'
+    }
+  }
+  parallelMap["Windows x86"] = {
+    node('windows') {
+      checkout(poll: false, changelog: false, scm: scm)
+      bat('git submodule update --init --recursive')
+      dir('libzt') {
+        bat('''
+  git clean -xdf build bin_win32
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017"
+  ''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  cmake --build build''')
+        bat('move bin bin_win32')
+      }
+      archiveArtifacts 'libzt/bin_win32/**'
+      stash includes: 'libzt/bin_win32/**,libzt/include/**', name: 'win32'
     }
   }
   parallel (parallelMap)
@@ -75,15 +96,23 @@ stage('Publish to GitHub') {
         }
         ws {
           sh('rm -Rf libzt || true')
-          unstash 'win'
+          unstash 'win32'
+          sh('zip -r win32-' + env.BUILD_NUMBER + '.zip libzt/bin_win32 libzt/include')
+          stash includes: ('win32-' + env.BUILD_NUMBER + '.zip'), name: 'win32-archive'
+        }
+        ws {
+          sh('rm -Rf libzt || true')
+          unstash 'win64'
           sh('zip -r win64-' + env.BUILD_NUMBER + '.zip libzt/bin_win64 libzt/include')
-          stash includes: ('win64-' + env.BUILD_NUMBER + '.zip'), name: 'win-archive'
+          stash includes: ('win64-' + env.BUILD_NUMBER + '.zip'), name: 'win64-archive'
         }
         unstash 'linux-archive'
         unstash 'mac-archive'
-        unstash 'win-archive'
+        unstash 'win32-archive'
+        unstash 'win64-archive'
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n linux64-' + env.BUILD_NUMBER + '.tar.gz -f linux64-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for Linux (64-bit)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -f macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for macOS (Universal)"')
+        sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n win32-' + env.BUILD_NUMBER + '.zip -f win32-' + env.BUILD_NUMBER + '.zip -l "libzt binaries and static libraries for Windows (32-bit)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n win64-' + env.BUILD_NUMBER + '.zip -f win64-' + env.BUILD_NUMBER + '.zip -l "libzt binaries and static libraries for Windows (64-bit)"')
         sh('\$GITHUB_RELEASE edit --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n "libzt binaries (build #' + env.BUILD_NUMBER + ')" -d "These are automatically built binaries and static libraries for libzt (ZeroTier). These binaries are GPL-licensed unless you have a commercial license from ZeroTier, Inc. See the README in this repository for more information."')
       }

@@ -11,6 +11,7 @@ You can download the latest builds of libzt from the [GitHub releases page](http
 
 * Linux (64-bit)
 * macOS (Universal)
+* Windows (32-bit)
 * Windows (64-bit)
 
 ## Licensing
