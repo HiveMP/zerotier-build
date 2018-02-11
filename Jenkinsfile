@@ -76,7 +76,7 @@ stage('Publish to GitHub') {
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n linux64-' + env.BUILD_NUMBER + '.tar.gz -f linux64-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for Linux (64-bit)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -f macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for macOS (Universal)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n win64-' + env.BUILD_NUMBER + '.zip -f win64-' + env.BUILD_NUMBER + '.zip -l "libzt binaries and static libraries for Windows (64-bit)"')
-        sh('\$GITHUB_RELEASE edit --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n "libzt binaries (build #' + env.BUILD_NUMBER + ')" -d "These are automatically built binaries and static libraries for libzt (ZeroTier). These binaries are GPL-encumbered unless you have a commercial license from ZeroTier, Inc. See the README in this repository for more information."')
+        sh('\$GITHUB_RELEASE edit --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n "libzt binaries (build #' + env.BUILD_NUMBER + ')" -d "These are automatically built binaries and static libraries for libzt (ZeroTier). These binaries are GPL-licensed unless you have a commercial license from ZeroTier, Inc. See the README in this repository for more information."')
       }
     }
   }
