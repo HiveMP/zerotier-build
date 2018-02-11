@@ -40,12 +40,12 @@ stage('Build') {
         bat('''
   git clean -xdf build bin_win64
   set PATH=%PATH:"=%
-  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
   cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017 Win64"
   ''')
         bat('''
   set PATH=%PATH:"=%
-  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
   cmake --build build''')
         bat('move bin bin_win64')
       }
@@ -61,12 +61,12 @@ stage('Build') {
         bat('''
   git clean -xdf build bin_win32
   set PATH=%PATH:"=%
-  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\VC\\Auxiliary\\Build\\vcvars32.bat"
   cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017"
   ''')
         bat('''
   set PATH=%PATH:"=%
-  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\VC\\Auxiliary\\Build\\vcvars32.bat"
   cmake --build build''')
         bat('move bin bin_win32')
       }
