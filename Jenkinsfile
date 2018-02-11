@@ -29,7 +29,7 @@ stage('Build') {
         sh('mv bin bin_macosuniversal')
       }
       archiveArtifacts 'libzt/bin_macosuniversal/**'
-      stash includes: 'libzt/bin_macosuniversal/**', name: 'mac'
+      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/**', name: 'mac'
     }
   }
   parallelMap["Windows"] = {
@@ -50,7 +50,7 @@ stage('Build') {
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**'
-      stash includes: 'libzt/bin_win64/**', name: 'win'
+      stash includes: 'libzt/bin_win64/**,libzt/include/**', name: 'win'
     }
   }
   parallel (parallelMap)
