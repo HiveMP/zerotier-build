@@ -53,6 +53,7 @@ stage('Build') {
       stash includes: 'libzt/bin_win64/**', name: 'win'
     }
   }
+  parallel (parallelMap)
 }
 milestone label: 'Publish', ordinal: 20
 stage('Publish to GitHub') {
