@@ -1,54 +1,57 @@
 def gitCommit = ""
-stage('Linux') {
-  node('linux') {
-    withCredentials([string(credentialsId: 'HiveMP-Deploy', variable: 'GITHUB_TOKEN')]) {
-      // Try to load credential so we know they'll work at the end of the script.
+stage('Build') {
+  def parallelMap = [:]
+  parallelMap["Linux"] = {
+    node('linux') {
+      withCredentials([string(credentialsId: 'HiveMP-Deploy', variable: 'GITHUB_TOKEN')]) {
+        // Try to load credential so we know they'll work at the end of the script.
+      }
+      gitCommit = checkout(poll: true, changelog: true, scm: scm).GIT_COMMIT
+      sh('git submodule update --init --recursive')
+      dir('libzt') {
+        sh('git clean -xdf build bin_linux64 || true')
+        sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
+        sh('cmake --build build')
+        sh('mv bin bin_linux64')
+      }
+      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/**'
+      stash includes: 'libzt/bin_linux64/**,libzt/include/**', name: 'linux'
     }
-    gitCommit = checkout(poll: true, changelog: true, scm: scm).GIT_COMMIT
-    sh('git submodule update --init --recursive')
-    dir('libzt') {
-      sh('git clean -xdf build bin_linux64 || true')
-      sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
-      sh('cmake --build build')
-      sh('mv bin bin_linux64')
-    }
-    archiveArtifacts 'libzt/bin_linux64/**,libzt/include/**'
-    stash includes: 'libzt/bin_linux64/**,libzt/include/**', name: 'linux'
   }
-}
-stage('Windows') {
-  node('windows') {
-    checkout(poll: false, changelog: false, scm: scm)
-    bat('git submodule update --init --recursive')
-    dir('libzt') {
-      bat('''
-git clean -xdf build bin_win64
-set PATH=%PATH:"=%
-call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
-cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
-''')
-      bat('''
-set PATH=%PATH:"=%
-call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
-cmake --build build''')
-      bat('move bin bin_win64')
+  parallelMap["macOS"] = {
+    node('mac') {
+      checkout(poll: false, changelog: false, scm: scm)
+      sh('git submodule update --init --recursive')
+      dir('libzt') {
+        sh('git clean -xdf build bin_macosuniversal || true')
+        sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386"')
+        sh('cmake --build build')
+        sh('mv bin bin_macosuniversal')
+      }
+      archiveArtifacts 'libzt/bin_macosuniversal/**'
+      stash includes: 'libzt/bin_macosuniversal/**', name: 'mac'
     }
-    archiveArtifacts 'libzt/bin_win64/**'
-    stash includes: 'libzt/bin_win64/**', name: 'win'
   }
-}
-stage('macOS') {
-  node('mac') {
-    checkout(poll: false, changelog: false, scm: scm)
-    sh('git submodule update --init --recursive')
-    dir('libzt') {
-      sh('git clean -xdf build bin_macosuniversal || true')
-      sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE "-DCMAKE_OSX_ARCHITECTURES=x86_64;i386"')
-      sh('cmake --build build')
-      sh('mv bin bin_macosuniversal')
+  parallelMap["Windows"] = {
+    node('windows') {
+      checkout(poll: false, changelog: false, scm: scm)
+      bat('git submodule update --init --recursive')
+      dir('libzt') {
+        bat('''
+  git clean -xdf build bin_win64
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE
+  ''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsDevCmd.bat"
+  cmake --build build''')
+        bat('move bin bin_win64')
+      }
+      archiveArtifacts 'libzt/bin_win64/**'
+      stash includes: 'libzt/bin_win64/**', name: 'win'
     }
-    archiveArtifacts 'libzt/bin_macosuniversal/**'
-    stash includes: 'libzt/bin_macosuniversal/**', name: 'mac'
   }
 }
 milestone label: 'Publish', ordinal: 20
