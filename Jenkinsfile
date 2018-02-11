@@ -1,3 +1,20 @@
+stage('Linux') {
+  node('linux') {
+    withCredentials([string(credentialsId: 'HiveMP-Deploy', variable: 'GITHUB_TOKEN')]) {
+      // Try to load credential so we know they'll work at the end of the script.
+    }
+    checkout scm
+    sh('git submodule update --init --recursive')
+    dir('libzt') {
+      sh('git clean -xdf build bin_linux64 || true')
+      sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
+      sh('cmake --build build')
+      sh('mv bin bin_linux64')
+    }
+    archiveArtifacts 'libzt/bin_linux64/**,libzt/include/**'
+    stash includes: 'libzt/bin_linux64/**,libzt/include/**', name: 'linux'
+  }
+}
 stage('Windows') {
   node('windows') {
     checkout scm
@@ -17,20 +34,6 @@ cmake --build build''')
     }
     archiveArtifacts 'libzt/bin_win64/**'
     stash includes: 'libzt/bin_win64/**', name: 'win'
-  }
-}
-stage('Linux') {
-  node('linux') {
-    checkout scm
-    sh('git submodule update --init --recursive')
-    dir('libzt') {
-      sh('git clean -xdf build bin_linux64 || true')
-      sh('cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_EXE_LINKER_FLAGS=-pthread')
-      sh('cmake --build build')
-      sh('mv bin bin_linux64')
-    }
-    archiveArtifacts 'libzt/bin_linux64/**,libzt/include/**'
-    stash includes: 'libzt/bin_linux64/**,libzt/include/**', name: 'linux'
   }
 }
 stage('macOS') {
