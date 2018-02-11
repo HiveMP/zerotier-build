@@ -76,7 +76,7 @@ stage('Publish to GitHub') {
         ws {
           sh('rm -Rf libzt || true')
           unstash 'win'
-          sh('zip win64-' + env.BUILD_NUMBER + '.zip libzt/bin_win64 libzt/include')
+          sh('zip -r win64-' + env.BUILD_NUMBER + '.zip libzt/bin_win64 libzt/include')
           stash includes: ('win64-' + env.BUILD_NUMBER + '.zip'), name: 'win-archive'
         }
         unstash 'linux-archive'
