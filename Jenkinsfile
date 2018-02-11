@@ -39,6 +39,15 @@ stage('Build') {
       dir('libzt') {
         bat('''
   git clean -xdf build bin_win64
+  git checkout -f CMakeLists.txt
+  ''')
+        powershell('''
+  $Value = Get-Content -Raw CMakeLists.txt
+  $Value = $Value.Replace("\\\\x86", "\\\\x64")
+  $Value = $Value.Replace("/x86", "/x64")
+  Set-Content -Path CMakeLists.txt -Value $Value
+  ''')
+        bat('''
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
   cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017 Win64"
@@ -60,6 +69,7 @@ stage('Build') {
       dir('libzt') {
         bat('''
   git clean -xdf build bin_win32
+  git checkout -f CMakeLists.txt
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
   cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017"
