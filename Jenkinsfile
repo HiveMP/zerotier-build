@@ -14,8 +14,8 @@ stage('Build') {
         sh('cmake --build build')
         sh('mv bin bin_linux64')
       }
-      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**'
-      stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'linux'
+      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**'
+      stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**', name: 'linux'
     }
   }
   parallelMap["macOS"] = {
@@ -29,7 +29,7 @@ stage('Build') {
         sh('mv bin bin_macosuniversal')
       }
       archiveArtifacts 'libzt/bin_macosuniversal/**'
-      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'mac'
+      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**', name: 'mac'
     }
   }
   parallelMap["Windows x64"] = {
@@ -59,7 +59,7 @@ stage('Build') {
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**'
-      stash includes: 'libzt/bin_win64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'win64'
+      stash includes: 'libzt/bin_win64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**', name: 'win64'
     }
   }
   parallelMap["Windows x86"] = {
@@ -81,7 +81,7 @@ stage('Build') {
         bat('move bin bin_win32')
       }
       archiveArtifacts 'libzt/bin_win32/**'
-      stash includes: 'libzt/bin_win32/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'win32'
+      stash includes: 'libzt/bin_win32/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**', name: 'win32'
     }
   }
   parallel (parallelMap)
