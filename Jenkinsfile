@@ -14,8 +14,8 @@ stage('Build') {
         sh('cmake --build build')
         sh('mv bin bin_linux64')
       }
-      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/**'
-      stash includes: 'libzt/bin_linux64/**,libzt/include/**', name: 'linux'
+      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**'
+      stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'linux'
     }
   }
   parallelMap["macOS"] = {
@@ -29,7 +29,7 @@ stage('Build') {
         sh('mv bin bin_macosuniversal')
       }
       archiveArtifacts 'libzt/bin_macosuniversal/**'
-      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/**', name: 'mac'
+      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'mac'
     }
   }
   parallelMap["Windows x64"] = {
@@ -59,7 +59,7 @@ stage('Build') {
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**'
-      stash includes: 'libzt/bin_win64/**,libzt/include/**', name: 'win64'
+      stash includes: 'libzt/bin_win64/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'win64'
     }
   }
   parallelMap["Windows x86"] = {
@@ -81,7 +81,7 @@ stage('Build') {
         bat('move bin bin_win32')
       }
       archiveArtifacts 'libzt/bin_win32/**'
-      stash includes: 'libzt/bin_win32/**,libzt/include/**', name: 'win32'
+      stash includes: 'libzt/bin_win32/**,libzt/include/libzt.h,libzt/ext/lwip/src/include/lwip/**', name: 'win32'
     }
   }
   parallel (parallelMap)
@@ -95,24 +95,28 @@ stage('Publish to GitHub') {
         ws {
           sh('rm -Rf libzt || true')
           unstash 'linux'
+          sh('mv libzt/ext/lwip/src/include/lwip libzt/include/')
           sh('tar -zcvf linux64-' + env.BUILD_NUMBER + '.tar.gz libzt/bin_linux64 libzt/include')
           stash includes: ('linux64-' + env.BUILD_NUMBER + '.tar.gz'), name: 'linux-archive'
         }
         ws {
           sh('rm -Rf libzt || true')
           unstash 'mac'
+          sh('mv libzt/ext/lwip/src/include/lwip libzt/include/')
           sh('tar -zcvf macosuniversal-' + env.BUILD_NUMBER + '.tar.gz libzt/bin_macosuniversal libzt/include')
           stash includes: ('macosuniversal-' + env.BUILD_NUMBER + '.tar.gz'), name: 'mac-archive'
         }
         ws {
           sh('rm -Rf libzt || true')
           unstash 'win32'
+          sh('mv libzt/ext/lwip/src/include/lwip libzt/include/')
           sh('zip -r win32-' + env.BUILD_NUMBER + '.zip libzt/bin_win32 libzt/include')
           stash includes: ('win32-' + env.BUILD_NUMBER + '.zip'), name: 'win32-archive'
         }
         ws {
           sh('rm -Rf libzt || true')
           unstash 'win64'
+          sh('mv libzt/ext/lwip/src/include/lwip libzt/include/')
           sh('zip -r win64-' + env.BUILD_NUMBER + '.zip libzt/bin_win64 libzt/include')
           stash includes: ('win64-' + env.BUILD_NUMBER + '.zip'), name: 'win64-archive'
         }
