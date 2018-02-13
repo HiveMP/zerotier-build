@@ -14,8 +14,8 @@ stage('Build') {
         sh('cmake --build build')
         sh('mv bin bin_linux64')
       }
-      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**'
-      stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'linux'
+      archiveArtifacts 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/include/lwipopts.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**'
+      stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/include/lwipopts.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'linux'
     }
   }
   /*
@@ -30,7 +30,7 @@ stage('Build') {
         sh('mv bin bin_macosuniversal')
       }
       archiveArtifacts 'libzt/bin_macosuniversal/**'
-      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'mac'
+      stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/include/lwipopts.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'mac'
     }
   }
   */
@@ -61,7 +61,7 @@ stage('Build') {
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**,libzt/ext/lwip-contrib/ports/win32/include/**'
-      stash includes: 'libzt/bin_win64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/win32/include/**', name: 'win64'
+      stash includes: 'libzt/bin_win64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/include/lwipopts.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/win32/include/**', name: 'win64'
     }
   }
   parallelMap["Windows x86"] = {
@@ -83,7 +83,7 @@ stage('Build') {
         bat('move bin bin_win32')
       }
       archiveArtifacts 'libzt/bin_win32/**'
-      stash includes: 'libzt/bin_win32/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/win32/include/**', name: 'win32'
+      stash includes: 'libzt/bin_win32/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/include/lwipopts.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/win32/include/**', name: 'win32'
     }
   }
   parallel (parallelMap)
