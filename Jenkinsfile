@@ -18,6 +18,7 @@ stage('Build') {
       stash includes: 'libzt/bin_linux64/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'linux'
     }
   }
+  /*
   parallelMap["macOS"] = {
     node('mac') {
       checkout(poll: false, changelog: false, scm: scm)
@@ -32,6 +33,7 @@ stage('Build') {
       stash includes: 'libzt/bin_macosuniversal/**,libzt/include/libzt.h,libzt/include/libztDebug.h,libzt/include/libztDefs.h,libzt/ext/lwip/src/include/lwip/**,libzt/ext/lwip-contrib/ports/unix/include/**', name: 'mac'
     }
   }
+  */
   parallelMap["Windows x64"] = {
     node('windows') {
       checkout(poll: false, changelog: false, scm: scm)
@@ -100,14 +102,14 @@ stage('Publish to GitHub') {
           sh('tar -zcvf linux64-' + env.BUILD_NUMBER + '.tar.gz libzt/bin_linux64 libzt/include')
           stash includes: ('linux64-' + env.BUILD_NUMBER + '.tar.gz'), name: 'linux-archive'
         }
-        ws {
+        /*ws {
           sh('rm -Rf libzt || true')
           unstash 'mac'
           sh('mv libzt/ext/lwip/src/include/lwip libzt/include/')
           sh('mv libzt/ext/lwip-contrib/ports/unix/include/* libzt/include/lwip/')
           sh('tar -zcvf macosuniversal-' + env.BUILD_NUMBER + '.tar.gz libzt/bin_macosuniversal libzt/include')
           stash includes: ('macosuniversal-' + env.BUILD_NUMBER + '.tar.gz'), name: 'mac-archive'
-        }
+        }*/
         ws {
           sh('rm -Rf libzt || true')
           unstash 'win32'
@@ -125,11 +127,11 @@ stage('Publish to GitHub') {
           stash includes: ('win64-' + env.BUILD_NUMBER + '.zip'), name: 'win64-archive'
         }
         unstash 'linux-archive'
-        unstash 'mac-archive'
+        //unstash 'mac-archive'
         unstash 'win32-archive'
         unstash 'win64-archive'
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n linux64-' + env.BUILD_NUMBER + '.tar.gz -f linux64-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for Linux (64-bit)"')
-        sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -f macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for macOS (Universal)"')
+        //sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -f macosuniversal-' + env.BUILD_NUMBER + '.tar.gz -l "libzt binaries and static libraries for macOS (Universal)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n win32-' + env.BUILD_NUMBER + '.zip -f win32-' + env.BUILD_NUMBER + '.zip -l "libzt binaries and static libraries for Windows (32-bit)"')
         sh('\$GITHUB_RELEASE upload --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n win64-' + env.BUILD_NUMBER + '.zip -f win64-' + env.BUILD_NUMBER + '.zip -l "libzt binaries and static libraries for Windows (64-bit)"')
         sh('\$GITHUB_RELEASE edit --user HiveMP --repo zerotier-build --tag 0.' + env.BUILD_NUMBER + ' -n "libzt binaries (build #' + env.BUILD_NUMBER + ')" -d "These are automatically built binaries and static libraries for libzt (ZeroTier). These binaries are GPL-licensed unless you have a commercial license from ZeroTier, Inc. See the README in this repository for more information."')
