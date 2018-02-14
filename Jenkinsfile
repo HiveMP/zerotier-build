@@ -52,12 +52,24 @@ stage('Build') {
         bat('''
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017 Win64"
+  cmake -H. -Bbuild -G "Visual Studio 15 2017 Win64"
   ''')
         bat('''
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-  cmake --build build''')
+  cmake --build build --config Debug''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+  cmake --build build --config Release''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+  cmake --build build --config RelWithDebInfo''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+  cmake --build build --config MinSizeRel''')
         bat('move bin bin_win64')
       }
       archiveArtifacts 'libzt/bin_win64/**,libzt/ext/lwip-contrib/ports/win32/include/**'
@@ -74,12 +86,24 @@ stage('Build') {
   git checkout -f CMakeLists.txt
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
-  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=RELEASE -G "Visual Studio 15 2017"
+  cmake -H. -Bbuild -G "Visual Studio 15 2017"
   ''')
         bat('''
   set PATH=%PATH:"=%
   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
-  cmake --build build''')
+  cmake --build build --config Debug''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
+  cmake --build build --config Release''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
+  cmake --build build --config RelWithDebInfo''')
+        bat('''
+  set PATH=%PATH:"=%
+  call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat"
+  cmake --build build --config MinSizeRel''')
         bat('move bin bin_win32')
       }
       archiveArtifacts 'libzt/bin_win32/**'
